@@ -100,7 +100,7 @@ private:
       // (이 값은 필요에 따라 조정)
       double dist_threshold = 0.3;
 
-      if (dist < dist_threshold && (int)i - (int)clusters.size() < max_idx_step)
+      if (dist < dist_threshold)
       {
         current_cluster.push_back({x,y});
       }
@@ -145,42 +145,33 @@ private:
       if (cluster.empty()) continue;
 
       // 중심 계산
+            // 중심 계산
       double sum_x = 0.0, sum_y = 0.0;
       for (const auto & p : cluster)
       {
         sum_x += p.first;
         sum_y += p.second;
       }
-      double cx = sum_x / cluster.size(); //클러스터 중심좌표
-      double cy = sum_y / cluster.size();
+      double cx = sum_x / cluster.size(); // 라이다 기준 x
+      double cy = sum_y / cluster.size(); // 라이다 기준 y
 
-      // size 를 대충 "가장 멀리 떨어진 점 ~ 중심 거리 * 2" 정도로 ㄱ
-      double max_dist = 0.0;
-      for (const auto & p : cluster)
-      {
-        double dx = p.first - cx;
-        double dy = p.second - cy;
-        double d = std::sqrt(dx*dx + dy*dy);
-        if (d > max_dist) max_dist = d;
-      }
-      double size = 2.0 * max_dist;
+      ...
 
       f110_msgs::msg::Obstacle obs;
       obs.id = id++;
       obs.size = size;
 
-      // 여기서는 Frenet 대신 근삿값으로. 피타고라스 사용
-      double r = std::sqrt(cx*cx + cy*cy);  // 차에서 장애물까지 거리
-      double d = cy;                        // 옆으로 치우친 정도 (y)
+      // 여기서는 Frenet 안 쓰고 base_link 좌표라고 생각
+      double x = cx;
+      double y = cy;
 
-      obs.s_center = r;
-      obs.d_center = d;
-      obs.s_start  = r - size/2.0;
-      obs.s_end    = r + size/2.0;
-      obs.d_right  = d - size/2.0;
-      obs.d_left   = d + size/2.0;
+      obs.s_center = x;                // "전방 거리" 느낌
+      obs.d_center = y;                // "좌우 거리"
+      obs.s_start  = x - size/2.0;
+      obs.s_end    = x + size/2.0;
+      obs.d_right  = y - size/2.0;
+      obs.d_left   = y + size/2.0;
 
-      // tracking.py에서 쓰는 필드가 더 있으면 기본값으로 채워도 됨
       obs.vs = 0.0;
       obs.vd = 0.0;
       obs.is_static = true;
