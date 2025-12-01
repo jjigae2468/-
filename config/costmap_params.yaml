@@ -1,13 +1,5 @@
-# ================================
-# Nav2 Costmap Configuration
-# F1TENTH + Perception_cpp + Tracking_cpp 구조에 최적화
-# ================================
-# 주의: map_frame, robot_base_frame은 TF tree에 따라 수정할 수 있음
-#       대부분 'map' / 'base_link' 그대로 사용 가능
-# ================================
-
 global_costmap:
-  global_frame: map
+  global_frame: base_link
   robot_base_frame: base_link
   update_frequency: 10.0
   publish_frequency: 10.0
@@ -19,35 +11,30 @@ global_costmap:
   plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
 
   static_layer:
-    enabled: true
+    enabled: false     # base_link에서는 static map 사용 의미 없음
 
   obstacle_layer:
     enabled: true
-    max_obstacle_height: 2.0
     observation_sources: scan obstacle_points
-    
     scan:
       topic: /scan
       data_type: LaserScan
       marking: true
       clearing: true
-      expected_update_rate: 0.0
-      min_obstacle_height: 0.0
-
     obstacle_points:
       topic: /obstacle_points
       data_type: PointCloud2
       marking: true
-      clearing: false      # 장애물은 clearing 필요 없음
-      max_obstacle_height: 1.0
+      clearing: false
 
   inflation_layer:
     enabled: true
-    inflation_radius: 0.40        # F1TENTH는 좁은 공간 → 너무 크면 회피 불가능
+    inflation_radius: 0.3
     cost_scaling_factor: 3.0
 
+
 local_costmap:
-  global_frame: map
+  global_frame: base_link
   robot_base_frame: base_link
   update_frequency: 20.0
   publish_frequency: 20.0
@@ -60,25 +47,19 @@ local_costmap:
 
   obstacle_layer:
     enabled: true
-    max_obstacle_height: 2.0
     observation_sources: scan obstacle_points
-
     scan:
       topic: /scan
       data_type: LaserScan
       marking: true
       clearing: true
-      expected_update_rate: 0.0
-      min_obstacle_height: 0.0
-
     obstacle_points:
       topic: /obstacle_points
       data_type: PointCloud2
       marking: true
       clearing: false
-      max_obstacle_height: 1.0
 
   inflation_layer:
     enabled: true
-    inflation_radius: 0.30         # local costmap은 더 좁은 반경이 적절
+    inflation_radius: 0.25
     cost_scaling_factor: 3.0
