@@ -23,3 +23,5 @@ ament_target_dependencies(tracking_cpp
 
 install(TARGETS tracking_cpp
   DESTINATION lib/${PROJECT_NAME})
+
+
