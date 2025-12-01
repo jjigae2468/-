@@ -43,8 +43,25 @@ def generate_launch_description():
         executable="twist_to_drive.py",
         output="screen"
     )
+    
+    base_system = IncludeLaunchDescription(
+    PythonLaunchDescriptionSource(
+        os.path.join(
+            get_package_share_directory("stack_master"),
+            "base_system_launch.py"
+        )
+    ),
+    launch_arguments={
+        "racecar_version": "OrinNano",
+        "map_dir": "small_hall",
+        "map_name": "small_hall_orig",
+        "sim": "true"
+    }.items()
+)
+    
 
     return LaunchDescription([
+        base_system,
         detection_node,
         tracking_node,
         nav2_bringup,

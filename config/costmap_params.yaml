@@ -15,7 +15,7 @@ global_costmap:
 
   obstacle_layer:
     enabled: true
-    observation_sources: scan obstacle_points
+    observation_sources: "scan, obstacle_points"
     scan:
       topic: /scan
       data_type: LaserScan
@@ -47,7 +47,7 @@ local_costmap:
 
   obstacle_layer:
     enabled: true
-    observation_sources: scan obstacle_points
+    observation_sources: "scan, obstacle_points"
     scan:
       topic: /scan
       data_type: LaserScan
